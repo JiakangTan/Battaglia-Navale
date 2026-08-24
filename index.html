@@ -4,8 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battaglia navale</title>
+
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/index.js" defer></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
-    
+
+<body class="bg-primary">
+    <h1 class="text-light">Battaglia Navale</h1>
+
+    <div class="contenitore-gioco text-light">
+        <div class="wrapper">
+            <div class="contenitore-griglia">
+                <div class="titolo">La tua Flotta</div>
+                <div class="griglia" id="griglia-giocatore"></div>
+            </div>
+            <div class="statistiche">
+                <div class="cronometro">00:00</div>
+                <div class="tentativi">Tentativi: 0</div>
+            </div>
+            
+            <div class="contenitore-griglia">
+                <div class="titolo">Flotta Nemica</div>
+                <div class="griglia" id="griglia-nemico"></div>
+            </div>
+            
+        </div>
+
+        <div class="controlli">
+            <div id="stato">Preparazione...</div>
+            <button id=" btn-ricomincia " class="rounded">Nuova Partita</button>
+        </div>
+    </div>
+
+
 </body>
 </html>
