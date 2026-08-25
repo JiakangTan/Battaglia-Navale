@@ -34,15 +34,18 @@ function inizializza_gioco(){
     griglia_Giocatore = Array(grandezza_Griglia).fill(null).map(() => Array(grandezza_Griglia).fill(0));
     griglia_Nemica = Array(grandezza_Griglia).fill(null).map(() => Array(grandezza_Griglia).fill(0)); // converte il vettore in una matrice di 0
 
-    genera_Griglia(giocatoreGriglia,"giocatore")
-    genera_Griglia(nemicoGriglia,"nemico")
+    genera_Griglia(giocatoreGriglia,"giocatore");
+    genera_Griglia(nemicoGriglia,"nemico");
+
+    posiziona_navi(griglia_Giocatore, "player"); // posiziona le navi in modo casuale
+    posiziona_navi(griglia_Nemica,"nemico"); 
 
     naviRimastePlayer = 17;
     naviRimasteNemico = 17; // celle contenenti parti di navi
 
+    IniziaCronometro();
     
-    
-    
+    statoPartita.innerHTML = "Il tuo turno!"
 }
 
 function IniziaCronometro(){
@@ -116,22 +119,54 @@ function posiziona_navi(griglia,tipo){
 }
 
 function controlloPosizionamento(griglia,riga,col,size,orizzontale){
-
+    if (orizzontale) {
+        if (col + size > grandezza_Griglia) return false;
+            for (let i = 0; i < size; i++) {
+                if (griglia[riga][col + i] !== 0) return false;
+            }
+    }else{
+        if (riga + size > grandezza_Griglia) return false;
+            for (let i = 0; i < size; i++) {
+                if (griglia[riga + i][col] !== 0) return false;
+            }
+    }
+    return true;
 }
 
 function posizionamento(griglia,riga,col,size,orizzontale,tipo){
+    for (let i = 0; i < size; i++) {
+        if (orizzontale) {
+            griglia[riga][col + i] = 1;
+            if (tipo === 'player') {
+                    ottieniCella(giocatoreGriglia, riga, col + i).classList.add("nave");
+                }else
+                    ottieniCella(nemicoGriglia, riga , col + i).classList.add("nave");
+            }else {
+            griglia[riga + i][col] = 1;
+                if (tipo === 'player') {
+                    ottieniCella(giocatoreGriglia, riga + i, col).classList.add("nave");
+                }else
+                    ottieniCella(nemicoGriglia, riga + i, col).classList.add("nave");
 
+            }
+    }
 }
 
-function ottieniCella(){
-
+function ottieniCella(grigliaHTML,riga,col){ // ottiene la cella HTML 
+    return grigliaHTML.children[riga * grandezza_Griglia + col];
 }
 
-function clickCellaNemica(riga,col,cella){
+function clickCellaNemica(riga,col,cella){ // gestisce il click sulle celle del nemico
     if(!cella.classList.contains("acqua") && !cella.classList.contains("colpita")){
+        if(cella.classList.contains("nave")){
+            cella.classList.add("colpita");
+            cella.classList.remove("nave");
+        }else{
+            cella.classList.add("acqua")
+        }
         tentativi++;
         tentativiHTML.innerHTML = "Tentativi: "+ tentativi
-        cella.classList.add("acqua")
+        
     }
     
 
@@ -142,4 +177,3 @@ function turnoAI(){
 
 }
 
-inizializza_gioco();
