@@ -23,6 +23,7 @@ const nemicoGriglia = document.getElementById('griglia-nemico');
 const statoPartita = document.getElementById('stato');
 const btnRicomincia = document.getElementById('btn-partita');
 const tentativiHTML = document.getElementById('tent');
+const naviRimasteHTML = document.getElementById('navRimaste');
 
 const cronometro = document.getElementById('cronom');
 
@@ -44,14 +45,15 @@ function inizializza_gioco(){
     naviRimastePlayer = 17;
     naviRimasteNemico = 17; // celle contenenti parti di navi
 
+    naviRimasteHTML.innerHTML = "Celle navi rimaste: " + naviRimasteNemico;
     IniziaCronometro();
     
     statoPartita.innerHTML = "Il tuo turno!"
 
     tentativi = 0;
     tentativiHTML.innerHTML = "Tentativi: " + tentativi;
-    
-    console.log(griglia_Nemica) // dice dove sono le navi (1 = nave) nella console
+
+    console.log(griglia_Nemica) // dice dove sono le navi (0 = acqua , 1 = nave, 2 = acqua colpita , 3 = nave colpita) nella console
 
     btnRicomincia.disabled = true;
 }
@@ -169,6 +171,7 @@ function clickCellaNemica(riga,col,cella){ // gestisce il click sulle celle del 
         griglia_Nemica[riga][col] = 3;
         naviRimasteNemico--;
         statoPartita.innerHTML = "Nave colpita!";
+        naviRimasteHTML.innerHTML = "Celle navi rimaste: " + naviRimasteNemico;
 
         if(naviRimasteNemico === 0){
             statoPartita.innerHTML = "Hai vinto!"
