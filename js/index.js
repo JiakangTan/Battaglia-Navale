@@ -8,6 +8,7 @@ let griglia_Nemica = [];
 let naviRimastePlayer = 0;
 let naviRimasteNemico = 0;
 let gameOver = false;
+let tentativi = 0;
 
 // cronometro
 let interval = null;
@@ -15,10 +16,12 @@ let secondi = 0;
 let minuti = 0;
 let Attivo = false;
 
+
 const giocatoreGriglia = document.getElementById('griglia-giocatore');
 const nemicoGriglia = document.getElementById('griglia-nemico'); 
 const statoPartita = document.getElementById('stato');
 const btnRicomincia = document.getElementById('btn-ricomincia');
+const tentativiHTML = document.getElementById('tent');
 
 const cronometro = document.getElementById('cronom');
 
@@ -43,17 +46,27 @@ function inizializza_gioco(){
 }
 
 function IniziaCronometro(){
-    if(Attivo == true)
+    if(Attivo == true){
         clearInterval(interval);
+        minuti = 0
+        secondi = 0;
+        cronometro.innerHTML = `0${minuti}:0${secondi}`
+    }
+        
 
     interval = setInterval(() => {
-        if(secondi + 1 == 60)
+        if(secondi + 1 == 60) // calcola il tempo del cronometro
         {
             secondi = 0;
-            minuti++
+            if(minuti + 1 == 60)
+            {
+                minuti = 0;
+            }else
+                minuti++
         }else
             secondi++;
 
+        // stampa il tempo nel cronometro html
         if(minuti <10)
             if(secondi <10)
                 cronometro.innerHTML = `0${minuti}:0${secondi}`
@@ -64,36 +77,49 @@ function IniziaCronometro(){
                 cronometro.innerHTML = `${minuti}:0${secondi}`
             else
                 cronometro.innerHTML = `${minuti}:${secondi}`
+        
     }, 1000);
     Attivo = true;
 }
 
-function genera_Griglia(griglia,tipo){
+function genera_Griglia(grigliaHTML,tipo){
     for(let r = 0;r < grandezza_Griglia;r++){
         for(let c = 0;  c < grandezza_Griglia; c++){
             const cella = document.createElement('div');
-            cella.classList.add('cell');
+            cella.classList.add('cella');
             cella.dataset.row = r;
             cella.dataset.col = c;
 
             if(tipo === "nemico"){
-                cella.addEventListener('click', () => controllaCella(r, c, cell));
+                cella.addEventListener('click', () => clickCellaNemica(r, c, cella));
             }
 
-            griglia.appendChild(cella);
+            grigliaHTML.appendChild(cella);
         }
     }
 }
 
-function posiziona_navi(){
+function posiziona_navi(griglia,tipo){
+    grandezzeNavi.forEach(size => { // per ogni elemento del vettore
+        let posizionata = false;
+        while (!posizionata) {
+            const orizzontale = Math.random() < 0.5; // genera un numero tra 0 e 0.9999...
+            const riga = Math.floor(Math.random() * grandezza_Griglia);
+            const col = Math.floor(Math.random() * grandezza_Griglia);
+
+            if (controlloPosizionamento(griglia, riga, col, size, orizzontale)) {
+                posizionamento(griglia, riga, col, size, orizzontale, tipo);
+                posizionata = true;
+            }
+        }
+    });
+}
+
+function controlloPosizionamento(griglia,riga,col,size,orizzontale){
 
 }
 
-function controlloPosizionamento(){
-
-}
-
-function posizionamento(){
+function posizionamento(griglia,riga,col,size,orizzontale,tipo){
 
 }
 
@@ -101,8 +127,15 @@ function ottieniCella(){
 
 }
 
-function clickCellaNemica(){
+function clickCellaNemica(riga,col,cella){
+    if(!cella.classList.contains("acqua") && !cella.classList.contains("colpita")){
+        tentativi++;
+        tentativiHTML.innerHTML = "Tentativi: "+ tentativi
+        cella.classList.add("acqua")
+    }
+    
 
+    
 }
 
 function turnoAI(){
