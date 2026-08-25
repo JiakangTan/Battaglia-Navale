@@ -9,6 +9,7 @@ let naviRimastePlayer = 0;
 let naviRimasteNemico = 0;
 let gameOver = false;
 let tentativi = 0;
+let turnoComputer = false;
 
 // cronometro
 let interval = null;
@@ -20,7 +21,7 @@ let Attivo = false;
 const giocatoreGriglia = document.getElementById('griglia-giocatore');
 const nemicoGriglia = document.getElementById('griglia-nemico'); 
 const statoPartita = document.getElementById('stato');
-const btnRicomincia = document.getElementById('btn-ricomincia');
+const btnRicomincia = document.getElementById('btn-partita');
 const tentativiHTML = document.getElementById('tent');
 
 const cronometro = document.getElementById('cronom');
@@ -46,16 +47,23 @@ function inizializza_gioco(){
     IniziaCronometro();
     
     statoPartita.innerHTML = "Il tuo turno!"
+
+    tentativi = 0;
+    tentativiHTML.innerHTML = "Tentativi: " + tentativi;
+    
+    console.log(griglia_Nemica) // dice dove sono le navi (1 = nave) nella console
+
+    btnRicomincia.disabled = true;
 }
 
 function IniziaCronometro(){
     if(Attivo == true){
-        clearInterval(interval);
-        minuti = 0
-        secondi = 0;
-        cronometro.innerHTML = `0${minuti}:0${secondi}`
+        clearInterval(interval); 
     }
-        
+
+    minuti = 0
+    secondi = 0;
+    cronometro.innerHTML = `0${minuti}:0${secondi}`
 
     interval = setInterval(() => {
         if(secondi + 1 == 60) // calcola il tempo del cronometro
@@ -139,15 +147,12 @@ function posizionamento(griglia,riga,col,size,orizzontale,tipo){
             griglia[riga][col + i] = 1;
             if (tipo === 'player') {
                     ottieniCella(giocatoreGriglia, riga, col + i).classList.add("nave");
-                }else
-                    ottieniCella(nemicoGriglia, riga , col + i).classList.add("nave");
+                }
             }else {
             griglia[riga + i][col] = 1;
                 if (tipo === 'player') {
                     ottieniCella(giocatoreGriglia, riga + i, col).classList.add("nave");
-                }else
-                    ottieniCella(nemicoGriglia, riga + i, col).classList.add("nave");
-
+                }
             }
     }
 }
@@ -157,23 +162,80 @@ function ottieniCella(grigliaHTML,riga,col){ // ottiene la cella HTML
 }
 
 function clickCellaNemica(riga,col,cella){ // gestisce il click sulle celle del nemico
-    if(!cella.classList.contains("acqua") && !cella.classList.contains("colpita")){
-        if(cella.classList.contains("nave")){
-            cella.classList.add("colpita");
-            cella.classList.remove("nave");
-        }else{
-            cella.classList.add("acqua")
-        }
-        tentativi++;
-        tentativiHTML.innerHTML = "Tentativi: "+ tentativi
-        
-    }
+    if(gameOver || griglia_Nemica[riga][col] > 1 || turnoComputer == true) return; // se condizione verificata allora succede niente
     
+    if(griglia_Nemica[riga][col] == 1){
+        cella.classList.add("colpita");
+        griglia_Nemica[riga][col] = 3;
+        naviRimasteNemico--;
+        statoPartita.innerHTML = "Nave colpita!";
 
+        if(naviRimasteNemico === 0){
+            statoPartita.innerHTML = "Hai vinto!"
+            gameOver = true;
+            clearInterval(interval)
+            Attivo = false;
+
+            btnRicomincia.disabled = false;
+            return;
+        }
+
+    }else{
+        griglia_Nemica[riga][col] = 2;
+        cella.classList.add("acqua");
+        statoPartita.innerHTML = "Acqua!";
+    }
+
+    turnoComputer = true; // disattiva lo click del giocatore
+    
+    setTimeout(() => {
+        statoPartita.innerHTML = "Turno del computer...";
+    }, 1000);
+
+    setTimeout(turnoAI, 2500);
+    
+    
+    tentativi++;
+    tentativiHTML.innerHTML = "Tentativi: "+ tentativi;
+        
+    
     
 }
 
 function turnoAI(){
+    if (gameOver) return;
 
+        let colpoValido = false;
+        let riga, col, cellaHTML;
+
+        while (!colpoValido) {
+            riga = Math.floor(Math.random() * grandezza_Griglia);
+            col = Math.floor(Math.random() * grandezza_Griglia);
+
+            if (griglia_Giocatore[riga][col] <= 1) {
+                colpoValido = true;
+            }
+        }
+
+        cellaHTML = ottieniCella(giocatoreGriglia, riga, col);
+
+        if (griglia_Giocatore[riga][col] === 1) {
+            griglia_Giocatore[riga][col] = 3;
+            cellaHTML.classList.add("colpita");
+            naviRimastePlayer--;
+            statoPartita.innerHTML = "Il computer ha colpito una tua nave!";
+
+            if (naviRimastePlayer === 0) {
+                statusEl.textContent = "Hai perso! Il computer ha distrutto la tua flotta.";
+                gameOver = true;
+                btnRicomincia.disabled = false;
+                return;
+            }   
+        }else{
+            griglia_Giocatore[riga][col] = 2;
+            cellaHTML.classList.add("acqua");
+            statoPartita.innerHTML = "Il computer ha fatto acqua.";
+        }
+    turnoComputer = false;
 }
 
