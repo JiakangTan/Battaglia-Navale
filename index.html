@@ -23,7 +23,7 @@
                 <div class="griglia" id="griglia-giocatore"></div>
             </div>
             <div class="statistiche">
-                <div class="cronometro">00:00</div>
+                <div class="cronometro" id="cronom">00:00</div>
                 <div class="tentativi">Tentativi: 0</div>
             </div>
             
@@ -35,8 +35,8 @@
         </div>
 
         <div class="controlli">
-            <div id="stato">Preparazione...</div>
-            <button id=" btn-ricomincia " class="rounded">Nuova Partita</button>
+            <div id="stato" >Preparazione...</div>
+            <button id=" btn-ricomincia " class="rounded" onclick="IniziaCronometro()">Nuova Partita</button>
         </div>
     </div>
 
